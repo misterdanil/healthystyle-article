@@ -1,5 +1,7 @@
 package org.healthystyle.article.model;
 
+import java.time.Instant;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "article_source")
@@ -27,6 +31,9 @@ public class ArticleSource {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "source_id", nullable = false)
 	private Source source;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private Instant createdOn;
 
 	public ArticleSource() {
 		super();
@@ -58,4 +65,9 @@ public class ArticleSource {
 	public Source getSource() {
 		return source;
 	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+
 }

@@ -34,7 +34,7 @@ public class Text {
 	@OneToMany(mappedBy = "text", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<TextPart> textParts;
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public Text() {
 		super();

@@ -1,5 +1,7 @@
 package org.healthystyle.article.model.fragment;
 
+import java.time.Instant;
+
 import org.healthystyle.article.model.fragment.text.Text;
 
 import jakarta.persistence.CascadeType;
@@ -14,6 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(indexes = @Index(name = "order_fragment_id_idx", columnList = "fragment_id"))
@@ -37,6 +41,9 @@ public class Order {
 	private Quote quote;
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Roll roll;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private Instant createdOn;
 
 	public Order() {
 		super();
@@ -104,4 +111,7 @@ public class Order {
 		this.roll = roll;
 	}
 
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
 }

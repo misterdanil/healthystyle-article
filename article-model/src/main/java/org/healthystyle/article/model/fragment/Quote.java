@@ -36,7 +36,7 @@ public class Quote {
 	private String text;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public Quote() {
 		super();

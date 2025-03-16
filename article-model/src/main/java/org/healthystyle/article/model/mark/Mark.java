@@ -24,7 +24,7 @@ public class Mark {
 	private Integer value;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public Mark() {
 		super();
@@ -33,7 +33,6 @@ public class Mark {
 	public Mark(Integer value) {
 		super();
 		this.value = value;
-		createdOn = Instant.now();
 	}
 
 	public Long getId() {

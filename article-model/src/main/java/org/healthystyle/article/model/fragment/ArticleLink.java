@@ -34,7 +34,7 @@ public class ArticleLink {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Order order;
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public ArticleLink() {
 		super();
