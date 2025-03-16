@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -23,6 +25,9 @@ public class View {
 	@Column(name = "user_id")
 	private Long userId;
 	private String ip;
+	@ManyToOne
+	@JoinColumn(name = "article_id", nullable = false)
+	private Article article;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_on", nullable = false)
 	private Instant createdOn = Instant.now();
@@ -31,14 +36,16 @@ public class View {
 		super();
 	}
 
-	public View(Long userId) {
+	public View(Long userId, Article article) {
 		super();
 		this.userId = userId;
+		this.article = article;
 	}
 
-	public View(String ip) {
+	public View(String ip, Article article) {
 		super();
 		this.ip = ip;
+		this.article = article;
 	}
 
 	public Long getId() {
@@ -51,6 +58,10 @@ public class View {
 
 	public String getIp() {
 		return ip;
+	}
+
+	public Article getArticle() {
+		return article;
 	}
 
 	public Instant getCreatedOn() {

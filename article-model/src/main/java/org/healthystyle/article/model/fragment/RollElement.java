@@ -1,5 +1,7 @@
 package org.healthystyle.article.model.fragment;
 
+import java.time.Instant;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "roll_element", indexes = @Index(name = "roll_element_roll_id_idx", columnList = "roll_id"))
@@ -25,6 +29,9 @@ public class RollElement {
 	private String text;
 	@Column(nullable = false)
 	private Integer order;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private Instant createdOn = Instant.now();
 
 	public RollElement() {
 		super();
@@ -59,6 +66,10 @@ public class RollElement {
 
 	public void setOrder(Integer order) {
 		this.order = order;
+	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
 	}
 
 }

@@ -8,6 +8,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>article-model</module>
+		<module>article-repository</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -30,6 +30,8 @@ public class Category {
 	private Long id;
 	@Column(nullable = false, unique = true)
 	private String title;
+	@Column(nullable = false)
+	private Integer order;
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Article> articles;
 	@ManyToOne
@@ -44,9 +46,10 @@ public class Category {
 		super();
 	}
 
-	public Category(String title) {
+	public Category(String title, Integer order) {
 		super();
 		this.title = title;
+		this.order = order;
 	}
 
 	public Long getId() {
@@ -59,6 +62,14 @@ public class Category {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
 	}
 
 	public List<Article> getArticles() {
