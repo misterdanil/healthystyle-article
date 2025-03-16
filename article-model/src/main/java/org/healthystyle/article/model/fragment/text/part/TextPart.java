@@ -6,6 +6,8 @@ import org.healthystyle.article.model.fragment.text.Text;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +23,7 @@ import jakarta.persistence.TemporalType;
 @Entity
 @Table(name = "text_part")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class TextPart {
+public class TextPart {
 	@Id
 	@SequenceGenerator(name = "text_part_generator", sequenceName = "text_part_seq", initialValue = 1, allocationSize = 20)
 	@GeneratedValue(generator = "text_part_generator", strategy = GenerationType.SEQUENCE)
@@ -60,4 +62,9 @@ public abstract class TextPart {
 	public Text getText() {
 		return text;
 	}
+
+	public Instant getCreatedOn() {
+		return createdOn;
+	}
+	
 }

@@ -33,7 +33,7 @@ public class ArticleSource {
 	private Source source;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public ArticleSource() {
 		super();

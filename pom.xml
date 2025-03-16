@@ -9,6 +9,7 @@
 	<modules>
 		<module>article-model</module>
 		<module>article-repository</module>
+		<module>article-service</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

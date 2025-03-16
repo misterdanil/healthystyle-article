@@ -93,6 +93,10 @@ public class Article {
 		return fragments;
 	}
 
+	public void addFragment(Fragment fragment) {
+		getFragments().add(fragment);
+	}
+
 	public void addFragments(List<Fragment> fragments) {
 		getFragments().addAll(fragments);
 	}
