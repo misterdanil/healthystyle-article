@@ -21,19 +21,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = @Index(name = "roll_order_id_idx", columnList = "order_id"))
-public class Roll {
+public class Roll extends Order {
 	@Id
 	@SequenceGenerator(name = "roll_generator", sequenceName = "roll_seq", initialValue = 1, allocationSize = 20)
 	@GeneratedValue(generator = "roll_generator", strategy = GenerationType.SEQUENCE)
 	private Long id;
 	@OneToMany(mappedBy = "roll", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<RollElement> rollElements;
-	@ManyToOne
-	@JoinColumn(name = "fragment_id", nullable = false)
-	private Fragment fragment;
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "order_id", nullable = false)
-	private Order order;
 	@Column(nullable = false)
 	private Instant createdOn = Instant.now();
 
@@ -41,10 +35,8 @@ public class Roll {
 		super();
 	}
 
-	public Roll(Fragment fragment, Order order) {
-		super();
-		this.fragment = fragment;
-		this.order = order;
+	public Roll(Fragment fragment, Integer order) {
+		super(fragment, order);
 	}
 
 	public Long getId() {
@@ -60,22 +52,6 @@ public class Roll {
 
 	public void addRollElements(List<RollElement> rollElements) {
 		getRollElements().addAll(rollElements);
-	}
-
-	public Fragment getFragment() {
-		return fragment;
-	}
-
-	public void setFragment(Fragment fragment) {
-		this.fragment = fragment;
-	}
-
-	public Order getOrder() {
-		return order;
-	}
-
-	public void setOrder(Order order) {
-		this.order = order;
 	}
 
 	public Instant getCreatedOn() {

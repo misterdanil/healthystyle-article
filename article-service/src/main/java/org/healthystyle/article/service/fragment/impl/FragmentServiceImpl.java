@@ -44,7 +44,8 @@ public class FragmentServiceImpl implements FragmentService {
 	}
 
 	@Override
-	public Fragment save(FragmentSaveRequest saveRequest, Long articleId) {
+	public Fragment save(FragmentSaveRequest saveRequest, Long articleId)
+			throws ValidationException, FragmentExistException, OrderExistException, PreviousOrderNotFoundException {
 		LOG.debug("Validating fragment: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "fragment");
 		validator.validate(saveRequest, result);
@@ -92,7 +93,12 @@ public class FragmentServiceImpl implements FragmentService {
 		for (OrderSaveRequest orderSaveRequest : orderSaveRequests) {
 			LOG.debug("Saving order: {}", orderSaveRequest);
 			Order orderedFragmentPart = orderService.save(orderSaveRequest, fragment.getId());
+			fragment.addOrder(orderedFragmentPart);
 		}
+
+		LOG.info("The fragment was saved successfully: {}", fragment);
+
+		return fragment;
 	}
 
 }

@@ -1,10 +1,10 @@
 package org.healthystyle.article.model.fragment;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.healthystyle.article.model.Article;
-import org.healthystyle.article.model.fragment.text.Text;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,16 +36,8 @@ public class Fragment {
 	@ManyToOne
 	@JoinColumn(name = "article_id", nullable = false)
 	private Article article;
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<Text> texts;
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<Roll> rolls;
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<FragmentImage> images;
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<Quote> quotes;
-	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<ArticleLink> articleLinks;
+	@OneToMany(mappedBy = "fragment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<Order> orders;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	private Instant createdOn;
@@ -82,44 +74,19 @@ public class Fragment {
 		this.article = article;
 	}
 
-	public List<Text> getTexts() {
-		return texts;
+	public List<Order> getOrders() {
+		if (orders == null) {
+			orders = new ArrayList<>();
+		}
+		return orders;
 	}
 
-	public void setTexts(List<Text> texts) {
-		this.texts = texts;
+	public void addOrders(List<Order> orders) {
+		getOrders().addAll(orders);
 	}
 
-	public List<Roll> getRolls() {
-		return rolls;
-	}
-
-	public void setRolls(List<Roll> rolls) {
-		this.rolls = rolls;
-	}
-
-	public List<FragmentImage> getImages() {
-		return images;
-	}
-
-	public void setImages(List<FragmentImage> images) {
-		this.images = images;
-	}
-
-	public List<Quote> getQuotes() {
-		return quotes;
-	}
-
-	public void setQuotes(List<Quote> quotes) {
-		this.quotes = quotes;
-	}
-
-	public List<ArticleLink> getArticleLinks() {
-		return articleLinks;
-	}
-
-	public void setArticleLinks(List<ArticleLink> articleLinks) {
-		this.articleLinks = articleLinks;
+	public void addOrder(Order order) {
+		getOrders().add(order);
 	}
 
 }
