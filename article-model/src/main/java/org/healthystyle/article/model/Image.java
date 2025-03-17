@@ -54,6 +54,10 @@ public class Image {
 		return imageId;
 	}
 
+	public void setImageId(Long imageId) {
+		this.imageId = imageId;
+	}
+
 	public Instant getCreatedOn() {
 		return createdOn;
 	}

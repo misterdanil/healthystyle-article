@@ -14,7 +14,7 @@ public class ArticleSaveRequest {
 	@Valid
 	private ImageSaveRequest image;
 	@Valid
-	@NotEmpty(message ="Укажите хотя бы один фрагмент")
+	@NotEmpty(message = "Укажите хотя бы один фрагмент")
 	private List<FragmentSaveRequest> fragments;
 	@Valid
 	private List<ArticleSourceSaveRequest> sources;
@@ -27,12 +27,12 @@ public class ArticleSaveRequest {
 		this.title = title;
 	}
 
-	public Long getImageId() {
-		return imageId;
+	public ImageSaveRequest getImage() {
+		return image;
 	}
 
-	public void setImageId(Long imageId) {
-		this.imageId = imageId;
+	public void setImage(ImageSaveRequest image) {
+		this.image = image;
 	}
 
 	public List<FragmentSaveRequest> getFragments() {

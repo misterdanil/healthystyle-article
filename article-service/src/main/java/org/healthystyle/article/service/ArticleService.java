@@ -1,10 +1,17 @@
 package org.healthystyle.article.service;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.healthystyle.article.model.Article;
 import org.healthystyle.article.service.dto.ArticleSaveRequest;
+import org.healthystyle.article.service.dto.ArticleSourceSaveRequest;
 import org.healthystyle.article.service.dto.ArticleUpdateRequest;
+import org.healthystyle.article.service.dto.ImageUpdateRequest;
+import org.healthystyle.article.service.error.ArticleNotFoundException;
+import org.healthystyle.article.service.error.ImageNotFoundException;
+import org.healthystyle.article.service.error.OrderExistException;
+import org.healthystyle.article.service.error.PreviousOrderNotFoundException;
 import org.healthystyle.article.service.util.MethodNameHelper;
 import org.healthystyle.util.error.ValidationException;
 import org.springframework.data.domain.Page;
@@ -28,6 +35,8 @@ public interface ArticleService {
 	static final String[] FIND_MOST_MARKED_PARAM_NAMES = MethodNameHelper.getMethodParamNames(ArticleService.class,
 			"findMostMarked", Long.class, Long.class, Instant.class, Instant.class, int.class, int.class);
 
+	Article findById(Long id) throws ValidationException, ArticleNotFoundException;
+
 	Page<Article> find(int page, int limit) throws ValidationException;
 
 	Page<Article> findByTitle(String title, int page, int limit) throws ValidationException;
@@ -42,8 +51,9 @@ public interface ArticleService {
 	Page<Article> findMostMarked(Long categoryId, Long authorId, Instant start, Instant end, int page, int limit)
 			throws ValidationException;
 
-	Article save(ArticleSaveRequest saveRequest, Long categoryId) throws ValidationException;
+	Article save(ArticleSaveRequest saveRequest, Long categoryId) throws ValidationException, ImageNotFoundException,
+			ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException;
 
-	void update(ArticleUpdateRequest updateRequest, Long articleId) throws ValidationException;
-
+	void update(ArticleUpdateRequest updateRequest, Long articleId)
+			throws ValidationException, ArticleNotFoundException;
 }

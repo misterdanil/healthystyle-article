@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 public class ImageSaveRequest {
-	@NotNull(message = "Укажите идентификатор картинки")
+	@NotNull(message = "Укажите идентификатор изображения")
 	private Long imageId;
 	@Valid
 	private SourceSaveRequest source;

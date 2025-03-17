@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 public class ArticleUpdateRequest {
 	@NotBlank(message = "Укажите название статьи")
 	private String title;
-	private Long imageId;
 	@NotNull(message = "Укажите категорию")
 	private Long categoryId;
 
@@ -16,14 +15,6 @@ public class ArticleUpdateRequest {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public Long getImageId() {
-		return imageId;
-	}
-
-	public void setImageId(Long imageId) {
-		this.imageId = imageId;
 	}
 
 	public Long getCategoryId() {

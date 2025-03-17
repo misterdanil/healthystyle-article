@@ -3,7 +3,6 @@ package org.healthystyle.article.model;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale.Category;
 
 import org.healthystyle.article.model.fragment.Fragment;
 import org.healthystyle.article.model.mark.MarkArticle;
@@ -61,9 +60,11 @@ public class Article {
 		super();
 	}
 
-	public Article(String title) {
+	public Article(String title, Long author, Category category) {
 		super();
 		this.title = title;
+		this.author = author;
+		this.category = category;
 	}
 
 	public Long getId() {
@@ -137,6 +138,10 @@ public class Article {
 
 	public void addSources(List<ArticleSource> sources) {
 		this.sources = sources;
+	}
+
+	public void addSource(ArticleSource source) {
+		getSources().add(source);
 	}
 
 	public List<Comment> getComments() {

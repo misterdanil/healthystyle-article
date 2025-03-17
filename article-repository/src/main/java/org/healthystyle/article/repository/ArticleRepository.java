@@ -28,5 +28,4 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 	
 	@Query("SELECT a.* FROM Article a LEFT JOIN a.marks ma LEFT JOIN ma.mark m WHERE (:start IS NULL OR a.createdOn >= :start) AND (:end IS NULL OR a.createdOn <= :end) AND (:author IS NULL OR a.user_id = :author) GROUP BY a.id ORDER BY AVG(m.value) NULLS LAST")
 	Page<Article> findMostMarked(Long categoryId, Long authorId, Instant start, Instant end, Pageable pageable);
-	
 }

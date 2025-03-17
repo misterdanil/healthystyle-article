@@ -2,7 +2,7 @@ package org.healthystyle.article.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class SourceSaveRequest {
+public class SourceUpdateRequest {
 	@NotBlank(message = "Укажите описание источника")
 	private String description;
 	@NotBlank(message = "Укажите источник")
@@ -23,5 +23,4 @@ public class SourceSaveRequest {
 	public void setLink(String link) {
 		this.link = link;
 	}
-
 }

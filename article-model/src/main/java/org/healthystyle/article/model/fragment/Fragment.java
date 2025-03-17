@@ -54,10 +54,11 @@ public class Fragment {
 		super();
 	}
 
-	public Fragment(Integer order, Article article) {
+	public Fragment(Integer order, Article article, String title) {
 		super();
 		this.order = order;
 		this.article = article;
+		this.title = title;
 		createdOn = Instant.now();
 	}
 

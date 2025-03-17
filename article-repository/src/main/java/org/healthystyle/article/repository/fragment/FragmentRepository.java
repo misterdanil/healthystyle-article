@@ -11,4 +11,10 @@ import org.springframework.stereotype.Repository;
 public interface FragmentRepository extends JpaRepository<Fragment, Long> {
 	@Query("SELECT f FROM Fragment f WHERE f.article.id = :articleId ORDER BY f.order")
 	Page<Fragment> findByArticle(Long articleId, Pageable pageable);
+
+	@Query("SELECT EXISTS (SELECT f FROM Fragment f WHERE f.article.id = :articleId AND LOWER(f.title) = LOWER(:title))")
+	boolean existsByArticleAndTitle(Long articleId, String title);
+
+	@Query("SELECT EXISTS (SELECT f FROM Fragment f WHERE f.article.id = :articleId AND f.order = :order)")
+	boolean existsByArticleAndOrder(Long articleId, Integer order);
 }
