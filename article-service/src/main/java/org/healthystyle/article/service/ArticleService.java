@@ -12,6 +12,10 @@ import org.healthystyle.article.service.error.ArticleNotFoundException;
 import org.healthystyle.article.service.error.ImageNotFoundException;
 import org.healthystyle.article.service.error.OrderExistException;
 import org.healthystyle.article.service.error.PreviousOrderNotFoundException;
+import org.healthystyle.article.service.error.fragment.FragmentExistException;
+import org.healthystyle.article.service.error.fragment.FragmentNotFoundException;
+import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistException;
+import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
 import org.healthystyle.article.service.util.MethodNameHelper;
 import org.healthystyle.util.error.ValidationException;
 import org.springframework.data.domain.Page;
@@ -52,7 +56,8 @@ public interface ArticleService {
 			throws ValidationException;
 
 	Article save(ArticleSaveRequest saveRequest, Long categoryId) throws ValidationException, ImageNotFoundException,
-			ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException;
+			ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException, FragmentExistException,
+			ArticleLinkExistException, RollNotFoundException, FragmentNotFoundException;
 
 	void update(ArticleUpdateRequest updateRequest, Long articleId)
 			throws ValidationException, ArticleNotFoundException;

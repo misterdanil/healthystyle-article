@@ -26,6 +26,10 @@ import org.healthystyle.article.service.error.ArticleNotFoundException;
 import org.healthystyle.article.service.error.ImageNotFoundException;
 import org.healthystyle.article.service.error.OrderExistException;
 import org.healthystyle.article.service.error.PreviousOrderNotFoundException;
+import org.healthystyle.article.service.error.fragment.FragmentExistException;
+import org.healthystyle.article.service.error.fragment.FragmentNotFoundException;
+import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistException;
+import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
 import org.healthystyle.article.service.fragment.FragmentService;
 import org.healthystyle.article.service.util.LogTemplate;
 import org.healthystyle.article.service.util.ParamsChecker;
@@ -224,7 +228,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public Article save(ArticleSaveRequest saveRequest, Long categoryId) throws ValidationException,
-			ImageNotFoundException, ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException {
+			ImageNotFoundException, ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException,
+			FragmentExistException, ArticleLinkExistException, RollNotFoundException, FragmentNotFoundException {
 		LOG.debug("Validating article: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "article");
 		validator.validate(saveRequest, result);

@@ -54,6 +54,10 @@ public class Roll extends Order {
 		getRollElements().addAll(rollElements);
 	}
 
+	public void addRollElement(RollElement rollElement) {
+		getRollElements().add(rollElement);
+	}
+
 	public Instant getCreatedOn() {
 		return createdOn;
 	}

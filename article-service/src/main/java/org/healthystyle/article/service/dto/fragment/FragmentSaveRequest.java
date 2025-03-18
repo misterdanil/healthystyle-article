@@ -13,7 +13,6 @@ public class FragmentSaveRequest {
 	@Positive(message = "Порядок должен быть положительным и больше нуля")
 	private Integer order;
 	@NotEmpty(message = "Фрагмент не может быть пустым")
-	@Valid
 	private List<OrderSaveRequest> orders;
 
 	public String getTitle() {

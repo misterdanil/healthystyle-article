@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotEmpty;
 
 public class TextSaveRequest extends OrderSaveRequest {
 	@NotEmpty(message ="Укажите части текста")
-	@Valid
 	private List<TextPartSaveRequest> textParts;
 
 	public List<TextPartSaveRequest> getTextParts() {

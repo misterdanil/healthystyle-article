@@ -30,6 +30,8 @@ public class TextPart {
 	private Long id;
 	@Column(nullable = false)
 	private Integer order;
+	@Column(nullable = false)
+	private String value;
 	@ManyToOne
 	@JoinColumn(name = "text_id", nullable = false)
 	private Text text;
@@ -41,10 +43,11 @@ public class TextPart {
 		super();
 	}
 
-	public TextPart(Integer order, Text text) {
+	public TextPart(Integer order, Text text, String value) {
 		super();
 		this.order = order;
 		this.text = text;
+		this.value = value;
 	}
 
 	public Long getId() {
@@ -59,6 +62,14 @@ public class TextPart {
 		this.order = order;
 	}
 
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 	public Text getText() {
 		return text;
 	}
@@ -66,5 +77,5 @@ public class TextPart {
 	public Instant getCreatedOn() {
 		return createdOn;
 	}
-	
+
 }

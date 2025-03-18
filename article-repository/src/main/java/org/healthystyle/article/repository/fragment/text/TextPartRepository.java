@@ -9,6 +9,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TextPartRepository extends JpaRepository<TextPart, Long> {
+	@Query("SELECT tp FROM TextPart tp WHERE tp.text.id = :textId AND tp.order = :order")
+	TextPart findByTextAndOrder(Long textId, Integer order);
+	
 	@Query("SELECT * FROM TextPart tp LEFT JOIN BoldPart bp ON bp.id = tp.id LEFT JOIN CursivePart cp ON cp.id = tp.id LEFT JOIN LinkPart lp ON lp.id = tp.id WHERE tp.text.id = :textId ORDER BY tp.order")
 	Page<TextPart> findByText(Long textId, Pageable pageable);
+	
+
+	@Query("SELECT EXISTS(SELECT tp FROM TextPart tp WHERE tp.text.id = :textId AND tp.order = :order)")
+	boolean existsByTextAndOrder(Long textId, Integer order);
 }

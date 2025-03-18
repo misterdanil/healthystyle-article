@@ -102,11 +102,16 @@ public class ImageServiceImpl implements ImageService {
 		}
 
 		Image image = findById(id);
+		Long oldImageId = image.getImageId();
+		
 		image.setImageId(imageId);
 
 		LOG.debug("Image is OK: {}", updateRequest);
 
 		image = repository.save(image);
 		LOG.info("The image was updated successfully: {}", image);
+		
+		LOG.debug("Sending delete request to delete current image: {}", oldImageId);
+		imageClient.deleteById(oldImageId);
 	}
 }

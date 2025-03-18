@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotEmpty;
 
 public class RollSaveRequest extends OrderSaveRequest {
 	@NotEmpty(message = "Список не может быть пустым")
-	@Valid
 	private List<RollElementSaveRequest> rollElements;
 
 	public List<RollElementSaveRequest> getRollElements() {
