@@ -11,10 +11,16 @@ import org.springframework.stereotype.Repository;
 public interface ViewRepository extends JpaRepository<View, Long> {
 	@Query("SELECT COUNT(v) FROM View v INNER JOIN v.article a GROUP BY a.id WHERE a.id = :articleId")
 	Integer countByArticle(Long articleId);
-	
+
 	@Query("SELECT v FROM View v WHERE v.userId = :userId ORDER BY v.createdOn DESC")
 	Page<View> findByUserId(Long userId, Pageable pageable);
-	
+
 	@Query("SELECT v FROM View v WHERE v.article.id = :articleId ORDER BY v.createdOn DESC")
 	Page<View> findByArticle(Long articleId, Pageable pageable);
+
+	@Query("SELECT EXISTS (SELECT v FROM View v WHERE v.userId = :userId AND v.article.id = :articleId)")
+	boolean existsByUserIdAndArticle(Long userId, Long articleId);
+
+	@Query("SELECT EXISTS (SELECT v FROM View v WHERE v.ip = :ip AND v.article.id = :articleId)")
+	boolean existsByIpAndArticle(String ip, Long articleId);
 }
