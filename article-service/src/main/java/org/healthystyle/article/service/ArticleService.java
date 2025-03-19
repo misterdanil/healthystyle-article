@@ -9,6 +9,7 @@ import org.healthystyle.article.service.dto.ArticleSourceSaveRequest;
 import org.healthystyle.article.service.dto.ArticleUpdateRequest;
 import org.healthystyle.article.service.dto.ImageUpdateRequest;
 import org.healthystyle.article.service.error.ArticleNotFoundException;
+import org.healthystyle.article.service.error.CategoryNotFoundException;
 import org.healthystyle.article.service.error.ImageNotFoundException;
 import org.healthystyle.article.service.error.OrderExistException;
 import org.healthystyle.article.service.error.PreviousOrderNotFoundException;
@@ -57,8 +58,8 @@ public interface ArticleService {
 
 	Article save(ArticleSaveRequest saveRequest, Long categoryId) throws ValidationException, ImageNotFoundException,
 			ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException, FragmentExistException,
-			ArticleLinkExistException, RollNotFoundException, FragmentNotFoundException;
+			ArticleLinkExistException, RollNotFoundException, FragmentNotFoundException, CategoryNotFoundException;
 
 	void update(ArticleUpdateRequest updateRequest, Long articleId)
-			throws ValidationException, ArticleNotFoundException;
+			throws ValidationException, ArticleNotFoundException, CategoryNotFoundException;
 }

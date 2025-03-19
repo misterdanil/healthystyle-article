@@ -23,6 +23,7 @@ import org.healthystyle.article.service.dto.ArticleUpdateRequest;
 import org.healthystyle.article.service.dto.ImageSaveRequest;
 import org.healthystyle.article.service.dto.fragment.FragmentSaveRequest;
 import org.healthystyle.article.service.error.ArticleNotFoundException;
+import org.healthystyle.article.service.error.CategoryNotFoundException;
 import org.healthystyle.article.service.error.ImageNotFoundException;
 import org.healthystyle.article.service.error.OrderExistException;
 import org.healthystyle.article.service.error.PreviousOrderNotFoundException;
@@ -227,9 +228,10 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public Article save(ArticleSaveRequest saveRequest, Long categoryId) throws ValidationException,
-			ImageNotFoundException, ArticleNotFoundException, OrderExistException, PreviousOrderNotFoundException,
-			FragmentExistException, ArticleLinkExistException, RollNotFoundException, FragmentNotFoundException {
+	public Article save(ArticleSaveRequest saveRequest, Long categoryId)
+			throws ValidationException, ImageNotFoundException, ArticleNotFoundException, OrderExistException,
+			PreviousOrderNotFoundException, FragmentExistException, ArticleLinkExistException, RollNotFoundException,
+			FragmentNotFoundException, CategoryNotFoundException {
 		LOG.debug("Validating article: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "article");
 		validator.validate(saveRequest, result);
@@ -282,7 +284,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public void update(ArticleUpdateRequest updateRequest, Long articleId)
-			throws ValidationException, ArticleNotFoundException {
+			throws ValidationException, ArticleNotFoundException, CategoryNotFoundException {
 		LOG.debug("Validating article: {}", updateRequest);
 		BindingResult result = new BeanPropertyBindingResult(updateRequest, "article");
 		validator.validate(updateRequest, result);

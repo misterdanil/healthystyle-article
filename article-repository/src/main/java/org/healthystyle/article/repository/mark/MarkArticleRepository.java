@@ -19,11 +19,11 @@ public interface MarkArticleRepository extends JpaRepository<MarkArticle, Long> 
 	Page<MarkArticle> findByArticleAndValue(Long articleId, Pageable pageable);
 
 	@Query("SELECT ma FROM MarkArticle ma WHERE ma.userId = :userId ORDER BY ma.createdOn DESC")
-	Page<MarkArticle> findByUserId(Long userId);
+	Page<MarkArticle> findByUserId(Long userId, Pageable pageable);
 	
 	@Query("SELECT ma FROM MarkArticle ma WHERE ma.userId = :userId AND ma.article.id = :articleId ORDER BY ma.createdOn DESC")
 	MarkArticle findByUserIdAndArticle(Long userId, Long articleId);
 
 	@Query("SELECT ma FROM MarkArticle ma INNER JOIN ma.mark m WHERE ma.userId = :userId AND m.value = :value ORDER BY ma.createdOn DESC")
-	Page<MarkArticle> findByUserIdAndValue(Long userId, Integer value);
+	Page<MarkArticle> findByUserIdAndValue(Long userId, Integer value, Pageable pageable);
 }

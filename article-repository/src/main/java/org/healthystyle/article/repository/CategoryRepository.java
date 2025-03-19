@@ -13,10 +13,19 @@ import org.springframework.stereotype.Repository;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 	@Query("SELECT c FROM Category c WHERE c.title LIKE '%:title' ORDER BY c.order")
 	Page<Category> findByTitle(String title, Pageable pageable);
-	
+
 	@Query("SELECT c FROM Category c WHERE c.parentCategory IS NULL ORDER by c.order")
 	List<Category> findAllRootCategories();
-	
+
 	@Query("SELECT c FROM Category c WHERE c.parentCategory.id = :categoryId ORDER BY c.order")
 	List<Category> findAllChildCategories(Long categoryId);
+
+	@Query("SELECT EXISTS (SELECT c FROM Category c WHERE LOWER(c.title) = LOWER(:title))")
+	boolean existsByTitle(String title);
+
+	@Query("SELECT EXISTS (SELECT c FROM Category c WHERE c.parentCategory.id = :parentCategoryId AND c.order = :order)")
+	boolean existsByParentAndOrder(Long parentCategoryId, Integer order);
+	
+	@Query("SELECT EXISTS (SELECT c FROM Category c WHERE c.parentCategory.id IS NULL AND c.order = :order)")
+	boolean existsByOrder(Integer order);
 }
