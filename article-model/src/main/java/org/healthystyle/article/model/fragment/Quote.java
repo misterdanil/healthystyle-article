@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(indexes = @Index(name = "quote_order_id_idx", columnList = "order_id"))
+@DiscriminatorValue("quote")
 public class Quote extends Order {
 	@Id
 	@SequenceGenerator(name = "quote_generator", sequenceName = "quote_seq", initialValue = 1, allocationSize = 20)

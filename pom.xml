@@ -10,6 +10,8 @@
 		<module>article-model</module>
 		<module>article-repository</module>
 		<module>article-service</module>
+		<module>article-web</module>
+		<module>article-app</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

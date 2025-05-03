@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.healthystyle.article.model.Article;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "article_link", indexes = @Index(name = "article_link_order_id_idx", columnList = "order_id"))
+@DiscriminatorValue("link")
 public class ArticleLink extends Order{
 	@Id
 	@SequenceGenerator(name = "article_link_generator", sequenceName = "article_link_seq", initialValue = 1, allocationSize = 20)

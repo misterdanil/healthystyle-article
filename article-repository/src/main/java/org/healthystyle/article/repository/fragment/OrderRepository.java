@@ -12,7 +12,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("SELECT o FROM Order o WHERE o.fragment.id = :fragmentId AND o.order = :order")
 	Order findByFragmentAndOrder(Long fragmentId, Integer order);
 
-	@Query("SELECT o.*, al.*, fi.*, q.*, r.*, t.* FROM Fragment f INNER JOIN f.orders LEFT JOIN Text t ON o.id = t.id LEFT JOIN ArticleLink al ON al.id = o.id LEFT JOIN FragmentImage fi ON fi.id = o.id LEFT JOIN Quote q ON q.id = o.id LEFT JOIN Roll r ON r.id = o.id ORDER BY o.order")
+//	@Query("SELECT o, al, fi, q, r, t FROM Fragment f INNER JOIN f.orders p LEFT JOIN Text t ON o.id = t.id LEFT JOIN ArticleLink al ON al.id = o.id LEFT JOIN FragmentImage fi ON fi.id = o.id LEFT JOIN Quote q ON q.id = o.id LEFT JOIN Roll r ON r.id = o.id ORDER BY o.order")
 	Page<Order> findByFragment(Long fragmentId, Pageable pageable);
 
 	@Query("SELECT EXISTS (SELECT o FROM Order o WHERE o.fragment.id = :fragmentId AND o.order = :order)")

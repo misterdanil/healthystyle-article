@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = @Index(name = "roll_order_id_idx", columnList = "order_id"))
+@DiscriminatorValue("roll")
 public class Roll extends Order {
 	@Id
 	@SequenceGenerator(name = "roll_generator", sequenceName = "roll_seq", initialValue = 1, allocationSize = 20)

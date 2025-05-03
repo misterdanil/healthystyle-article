@@ -10,6 +10,7 @@ import org.healthystyle.article.model.fragment.text.part.TextPart;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = @Index(name = "text_order_id_idx", columnList = "order_id"))
+@DiscriminatorValue("text")
 public class Text extends Order {
 	@Id
 	@SequenceGenerator(name = "text_generator", sequenceName = "text_seq", initialValue = 1, allocationSize = 5)

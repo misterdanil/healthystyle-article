@@ -6,6 +6,7 @@ import org.healthystyle.article.model.Image;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +22,7 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "fragment_image", indexes = @Index(name = "fragment_image_order_id_idx", columnList = "order_id"))
+@DiscriminatorValue("image")
 public class FragmentImage extends Order {
 	@Id
 	@SequenceGenerator(name = "fragment_image_generator", sequenceName = "fragment_image_seq", initialValue = 1, allocationSize = 20)

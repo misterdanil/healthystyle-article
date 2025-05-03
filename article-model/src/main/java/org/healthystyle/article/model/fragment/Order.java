@@ -3,11 +3,15 @@ package org.healthystyle.article.model.fragment;
 import java.time.Instant;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
@@ -17,7 +21,9 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(indexes = @Index(name = "order_fragment_id_idx", columnList = "fragment_id"))
-public class Order {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING)
+public abstract class Order {
 	@Id
 	@SequenceGenerator(name = "order_generator", sequenceName = "order_seq", initialValue = 1, allocationSize = 20)
 	@GeneratedValue(generator = "order_generator", strategy = GenerationType.SEQUENCE)
