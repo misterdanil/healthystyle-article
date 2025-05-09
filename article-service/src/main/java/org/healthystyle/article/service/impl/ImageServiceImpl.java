@@ -1,5 +1,6 @@
 package org.healthystyle.article.service.impl;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -8,7 +9,9 @@ import org.healthystyle.article.model.Source;
 import org.healthystyle.article.repository.ImageRepository;
 import org.healthystyle.article.service.ImageService;
 import org.healthystyle.article.service.SourceService;
-import org.healthystyle.article.service.client.ImageServiceClient;
+import org.healthystyle.article.service.client.FileClient;
+import org.healthystyle.article.service.client.generator.CorrelationIdGenerator;
+import org.healthystyle.article.service.dto.FileSaveRequest;
 import org.healthystyle.article.service.dto.ImageSaveRequest;
 import org.healthystyle.article.service.dto.ImageUpdateRequest;
 import org.healthystyle.article.service.dto.SourceSaveRequest;
@@ -18,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -28,11 +32,13 @@ public class ImageServiceImpl implements ImageService {
 	@Autowired
 	private ImageRepository repository;
 	@Autowired
-	private ImageServiceClient imageClient;
+	private FileClient<Void> fileClient;
 	@Autowired
 	private SourceService sourceService;
 	@Autowired
 	private Validator validator;
+	@Autowired
+	private CorrelationIdGenerator<Image> correlationIdGenerator;
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImageServiceImpl.class);
 
@@ -58,18 +64,21 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
+	@Transactional
 	public Image save(ImageSaveRequest saveRequest) throws ValidationException, ImageNotFoundException {
 		LOG.debug("Validating image: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "image");
 		validator.validate(saveRequest, result);
-		Long imageId = saveRequest.getImageId();
-		if (!imageClient.existsById(imageId)) {
-			result.reject("image.save.image_id.not_exists", "Изображения с данным идентификатором не существует");
-			throw new ImageNotFoundException(imageId, result);
+		if (result.hasErrors()) {
+			throw new ValidationException(
+					"Exception occurred while saving image. Image is invalid. Image: %s. Result: %s", result,
+					saveRequest, result);
 		}
 
 		LOG.debug("Image is OK: {}", saveRequest);
-		Image image = new Image(imageId);
+
+		Image image = new Image();
+		image = repository.save(image);
 
 		SourceSaveRequest sourceSaveRequest = saveRequest.getSource();
 		if (sourceSaveRequest != null) {
@@ -78,9 +87,15 @@ public class ImageServiceImpl implements ImageService {
 			image.setSource(source);
 		}
 
-		image = repository.save(image);
 		LOG.info("The image was saved successfully: {}", image);
 
+		String correlationId = correlationIdGenerator.generate(image);
+		try {
+			fileClient.save(new FileSaveRequest(saveRequest.getRoot(), saveRequest.getRelativePath(),
+					saveRequest.getFile().getBytes(), correlationId, "article.image.created"));
+		} catch (IOException e) {
+			throw new RuntimeException("Couldn't get bytes from image multipart file", e);
+		}
 		return image;
 	}
 
@@ -96,22 +111,22 @@ public class ImageServiceImpl implements ImageService {
 			throw new ValidationException("The data is invalid. Result: %s", result, result);
 		}
 		Long imageId = updateRequest.getImageId();
-		if (!imageClient.existsById(imageId)) {
-			result.reject("image.update.image_id.not_exists", "Изображения с данным идентификатором не существует");
-			throw new ImageNotFoundException(imageId, result);
-		}
+//		if (!imageClient.existsById(imageId)) {
+//			result.reject("image.update.image_id.not_exists", "Изображения с данным идентификатором не существует");
+//			throw new ImageNotFoundException(imageId, result);
+//		}
 
 		Image image = findById(id);
 		Long oldImageId = image.getImageId();
-		
+
 		image.setImageId(imageId);
 
 		LOG.debug("Image is OK: {}", updateRequest);
 
 		image = repository.save(image);
 		LOG.info("The image was updated successfully: {}", image);
-		
+
 		LOG.debug("Sending delete request to delete current image: {}", oldImageId);
-		imageClient.deleteById(oldImageId);
+//		imageClient.deleteById(oldImageId);
 	}
 }

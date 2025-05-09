@@ -11,6 +11,8 @@ import org.healthystyle.util.error.ValidationException;
 public interface TextService {
 	Text findById(Long id) throws ValidationException, TextNotFoundException;
 
+	Text findFirstByArticle(Long articleId) throws ValidationException, TextNotFoundException;
+
 	Text save(TextSaveRequest saveRequest, Fragment fragment)
 			throws ValidationException, OrderExistException, PreviousOrderNotFoundException, TextNotFoundException;
 }

@@ -1,9 +1,15 @@
 package org.healthystyle.article.service.impl;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.healthystyle.article.model.Article;
 import org.healthystyle.article.model.ArticleSource;
@@ -16,11 +22,13 @@ import org.healthystyle.article.service.ArticleSourceService;
 import org.healthystyle.article.service.CategoryService;
 import org.healthystyle.article.service.ImageService;
 import org.healthystyle.article.service.UserAccessor;
-import org.healthystyle.article.service.client.ImageServiceClient;
+import org.healthystyle.article.service.ViewService;
+import org.healthystyle.article.service.client.FileClient;
 import org.healthystyle.article.service.dto.ArticleSaveRequest;
 import org.healthystyle.article.service.dto.ArticleSourceSaveRequest;
 import org.healthystyle.article.service.dto.ArticleUpdateRequest;
 import org.healthystyle.article.service.dto.ImageSaveRequest;
+import org.healthystyle.article.service.dto.PeriodSort;
 import org.healthystyle.article.service.dto.fragment.FragmentSaveRequest;
 import org.healthystyle.article.service.error.ArticleNotFoundException;
 import org.healthystyle.article.service.error.CategoryNotFoundException;
@@ -31,9 +39,11 @@ import org.healthystyle.article.service.error.fragment.FragmentExistException;
 import org.healthystyle.article.service.error.fragment.FragmentNotFoundException;
 import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistException;
 import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
+import org.healthystyle.article.service.error.fragment.text.TextNotFoundException;
 import org.healthystyle.article.service.fragment.FragmentService;
 import org.healthystyle.article.service.util.LogTemplate;
 import org.healthystyle.article.service.util.ParamsChecker;
+import org.healthystyle.util.error.AbstractException;
 import org.healthystyle.util.error.ValidationException;
 import org.healthystyle.util.user.User;
 import org.slf4j.Logger;
@@ -42,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -60,7 +71,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private ImageService imageService;
 	@Autowired
-	private ImageServiceClient imageServiceClient;
+	private FileClient imageServiceClient;
 	@Autowired
 	private CategoryService categoryService;
 	@Autowired
@@ -85,6 +96,7 @@ public class ArticleServiceImpl implements ArticleService {
 			result.reject("article.find.not_found", "Не удалось найти статью");
 			throw new ArticleNotFoundException(id, result);
 		}
+			
 		LOG.info("Got article successfully by id '{}'", id);
 
 		return article.get();
@@ -116,8 +128,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 		LOG.debug("Validating params: {}", params);
 		BindingResult result = new MapBindingResult(new LinkedHashMap<>(), "article");
-		if (title == null || title.isBlank()) {
-			result.reject("article.find.title.not_blank", "Укажите название статьи для поиска");
+		if (title == null) {
+			result.reject("article.find.title.not_null", "Укажите заголовок статьи для поиска");
 		}
 		ParamsChecker.checkPageNumber(page, result);
 		ParamsChecker.checkLimit(limit, MAX_SIZE, result);
@@ -180,23 +192,85 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public Page<Article> findMostWatched(Long categoryId, Long authorId, Instant start, Instant end, int page,
+	public Page<Article> findMostWatched(String title, Long categoryId, Long authorId, PeriodSort periodSort, int page,
 			int limit) throws ValidationException {
-		String params = LogTemplate.getParamsTemplate(FIND_MOST_WATCHED_PARAM_NAMES, categoryId, authorId, start, end,
-				page, limit);
+		String params = LogTemplate.getParamsTemplate(FIND_MOST_WATCHED_PARAM_NAMES, title, categoryId, authorId,
+				periodSort, page, limit);
 
 		LOG.debug("Validating params: {}", params);
 		BindingResult result = new MapBindingResult(new LinkedHashMap<>(), "article");
+		if (title == null) {
+			result.reject("article.find.title.not_null", "Укажите заголовок статьи для поиска");
+		}
+		if (periodSort == null) {
+			result.reject("article.find.period_sort.not_null", "Укажите временную сортировку");
+		}
 		ParamsChecker.checkPageNumber(page, result);
 		ParamsChecker.checkLimit(limit, MAX_SIZE, result);
-		ParamsChecker.checkDates(start, end, result);
 		if (result.hasErrors()) {
 			throw new ValidationException("The params are invalid: %s. Result: %s", result, params, result);
 		}
 
 		LOG.debug("The params are OK: {}", params);
 
-		Page<Article> articles = repository.findMostWatched(categoryId, authorId, start, end,
+		Instant start = null;
+		Instant end = null;
+		if (!periodSort.equals(PeriodSort.ALL_TIME)) {
+			end = Instant.now();
+			start = getStart(end, periodSort);
+		}
+
+		Page<Article> articles = repository.findMostWatched(title, categoryId, authorId, start, end,
+				PageRequest.of(page, limit));
+		LOG.info("Got articles successfully by params: {}", params);
+
+		return articles;
+	}
+
+	private Instant getStart(Instant end, PeriodSort sort) {
+		if (sort.equals(PeriodSort.DAY)) {
+			return end.minus(1, ChronoUnit.DAYS);
+		} else if (sort.equals(PeriodSort.WEEK)) {
+			return ZonedDateTime.ofInstant(end, ZoneId.systemDefault()).minusWeeks(1).toInstant();
+		} else if (sort.equals(PeriodSort.MONTH)) {
+			return ZonedDateTime.ofInstant(end, ZoneId.systemDefault()).minusMonths(1).toInstant();
+		} else if (sort.equals(PeriodSort.YEAR)) {
+			return ZonedDateTime.ofInstant(end, ZoneId.systemDefault()).minusYears(1).toInstant();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Page<Article> findMostMarked(String title, Long categoryId, Long authorId, PeriodSort periodSort, int page,
+			int limit) throws ValidationException {
+		String params = LogTemplate.getParamsTemplate(FIND_MOST_MARKED_PARAM_NAMES, title, categoryId, authorId,
+				periodSort, page, limit);
+
+		LOG.debug("Validating params: {}", params);
+		BindingResult result = new MapBindingResult(new LinkedHashMap<>(), "article");
+		if (title == null) {
+			result.reject("article.find.title.not_null", "Укажите заголовок статьи для поиска");
+		}
+		if (periodSort == null) {
+			result.reject("article.find.period_sort.not_null", "Укажите временную сортировку");
+		}
+		ParamsChecker.checkPageNumber(page, result);
+		ParamsChecker.checkLimit(limit, MAX_SIZE, result);
+		if (result.hasErrors()) {
+			throw new ValidationException("The params are invalid: %s. Result: %s", result, params, result);
+		}
+
+		LOG.debug("The params are OK: {}", params);
+
+		Instant start = null;
+		Instant end = null;
+		if (!periodSort.equals(PeriodSort.ALL_TIME)) {
+			end = Instant.now();
+			start = getStart(end, periodSort);
+		}
+
+		Page<Article> articles = repository.findMostMarked(title, categoryId, authorId, start, end,
 				PageRequest.of(page, limit));
 		LOG.info("Got articles successfully by params: {}", params);
 
@@ -204,34 +278,11 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
-	public Page<Article> findMostMarked(Long categoryId, Long authorId, Instant start, Instant end, int page, int limit)
-			throws ValidationException {
-		String params = LogTemplate.getParamsTemplate(FIND_MOST_MARKED_PARAM_NAMES, categoryId, authorId, start, end,
-				page, limit);
-
-		LOG.debug("Validating params: {}", params);
-		BindingResult result = new MapBindingResult(new LinkedHashMap<>(), "article");
-		ParamsChecker.checkPageNumber(page, result);
-		ParamsChecker.checkLimit(limit, MAX_SIZE, result);
-		ParamsChecker.checkDates(start, end, result);
-		if (result.hasErrors()) {
-			throw new ValidationException("The params are invalid: %s. Result: %s", result, params, result);
-		}
-
-		LOG.debug("The params are OK: {}", params);
-
-		Page<Article> articles = repository.findMostMarked(categoryId, authorId, start, end,
-				PageRequest.of(page, limit));
-		LOG.info("Got articles successfully by params: {}", params);
-
-		return articles;
-	}
-
-	@Override
+	@Transactional(rollbackFor = { AbstractException.class, RuntimeException.class })
 	public Article save(ArticleSaveRequest saveRequest, Long categoryId)
 			throws ValidationException, ImageNotFoundException, ArticleNotFoundException, OrderExistException,
 			PreviousOrderNotFoundException, FragmentExistException, ArticleLinkExistException, RollNotFoundException,
-			FragmentNotFoundException, CategoryNotFoundException {
+			FragmentNotFoundException, CategoryNotFoundException, TextNotFoundException {
 		LOG.debug("Validating article: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "article");
 		validator.validate(saveRequest, result);
@@ -249,6 +300,15 @@ public class ArticleServiceImpl implements ArticleService {
 
 		ImageSaveRequest imageSaveRequest = saveRequest.getImage();
 		if (imageSaveRequest != null) {
+			String fileName = imageSaveRequest.getFile().getOriginalFilename();
+			imageSaveRequest.setRoot("article");
+			String extension = null;
+			int i = fileName.lastIndexOf('.');
+			if (i > 0) {
+				extension = "." + fileName.substring(i + 1);
+			}
+			imageSaveRequest.setRelativePath(
+					"articles/" + UUID.randomUUID().toString() + "/" + UUID.randomUUID().toString() + extension);
 			LOG.debug("Saving image: {}", imageSaveRequest);
 			Image image = imageService.save(imageSaveRequest);
 			article.setImage(image);

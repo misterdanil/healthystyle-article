@@ -27,7 +27,7 @@ public class RollElement {
 	private Roll roll;
 	@Column(nullable = false, length = 500)
 	private String text;
-	@Column(nullable = false)
+	@Column(name = "_order", nullable = false)
 	private Integer order;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)

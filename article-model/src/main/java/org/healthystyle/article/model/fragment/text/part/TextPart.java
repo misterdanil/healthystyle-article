@@ -28,7 +28,7 @@ public class TextPart {
 	@SequenceGenerator(name = "text_part_generator", sequenceName = "text_part_seq", initialValue = 1, allocationSize = 20)
 	@GeneratedValue(generator = "text_part_generator", strategy = GenerationType.SEQUENCE)
 	private Long id;
-	@Column(nullable = false)
+	@Column(name = "_order", nullable = false)
 	private Integer order;
 	@Column(nullable = false)
 	private String value;

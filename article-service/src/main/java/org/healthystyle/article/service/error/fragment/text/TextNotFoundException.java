@@ -11,6 +11,10 @@ public class TextNotFoundException extends AbstractException {
 		this.id = id;
 	}
 
+	public TextNotFoundException(String message, BindingResult result, Object... args) {
+		super(message, result, args);
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -29,7 +29,12 @@ public class MarkArticleServiceImpl implements MarkArticleService {
 
 	@Override
 	public Float getAvgByArticle(Long articleId) {
-		return repository.getAvgByArticle(articleId);
+		Float avg = repository.getAvgByArticle(articleId);
+		if (avg == null) {
+			return 0.0f;
+		}
+
+		return avg;
 	}
 
 	@Override

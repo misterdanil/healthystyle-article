@@ -10,11 +10,13 @@ import org.healthystyle.article.service.dto.fragment.QuoteSaveRequest;
 import org.healthystyle.article.service.dto.fragment.QuoteUpdateRequest;
 import org.healthystyle.article.service.error.fragment.quote.QuoteNotFoundException;
 import org.healthystyle.article.service.fragment.QuoteService;
+import org.healthystyle.util.error.AbstractException;
 import org.healthystyle.util.error.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 
@@ -47,6 +49,7 @@ public class QuoteServiceImpl implements QuoteService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = { AbstractException.class, RuntimeException.class })
 	public Quote save(QuoteSaveRequest saveRequest, Fragment fragment) {
 		if (fragment == null) {
 			throw new NullPointerException("The fragment is null");

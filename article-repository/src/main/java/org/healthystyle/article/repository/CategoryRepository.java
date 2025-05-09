@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-	@Query("SELECT c FROM Category c WHERE c.title LIKE '%:title' ORDER BY c.order")
+	@Query("SELECT c FROM Category c WHERE LOWER(c.title) LIKE CONCAT('%', LOWER(:title), '%') ORDER BY c.order")
 	Page<Category> findByTitle(String title, Pageable pageable);
 
 	@Query("SELECT c FROM Category c WHERE c.parentCategory IS NULL ORDER by c.order")

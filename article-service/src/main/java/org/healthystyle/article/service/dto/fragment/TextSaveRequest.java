@@ -9,14 +9,14 @@ import jakarta.validation.constraints.NotEmpty;
 
 public class TextSaveRequest extends OrderSaveRequest {
 	@NotEmpty(message ="Укажите части текста")
-	private List<TextPartSaveRequest> textParts;
+	private List<TextPartSaveRequest> parts;
 
-	public List<TextPartSaveRequest> getTextParts() {
-		return textParts;
+	public List<TextPartSaveRequest> getParts() {
+		return parts;
 	}
 
-	public void setTextParts(List<TextPartSaveRequest> textParts) {
-		this.textParts = textParts;
+	public void setParts(List<TextPartSaveRequest> textParts) {
+		this.parts = textParts;
 	}
 
 }

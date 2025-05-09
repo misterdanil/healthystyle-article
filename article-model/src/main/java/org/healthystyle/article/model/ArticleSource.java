@@ -23,7 +23,7 @@ public class ArticleSource {
 	@SequenceGenerator(name = "article_source_generator", sequenceName = "article_source_seq", initialValue = 1, allocationSize = 20)
 	@GeneratedValue(generator = "article_source_generator", strategy = GenerationType.SEQUENCE)
 	private Long id;
-	@Column(nullable = false)
+	@Column(name = "_order", nullable = false)
 	private Integer order;
 	@ManyToOne
 	@JoinColumn(name = "article_id")

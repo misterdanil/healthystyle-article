@@ -30,7 +30,7 @@ public class Category {
 	private Long id;
 	@Column(nullable = false, unique = true)
 	private String title;
-	@Column(nullable = false)
+	@Column(name = "_order", nullable = false)
 	private Integer order;
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Article> articles;

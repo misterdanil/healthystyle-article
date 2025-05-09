@@ -20,7 +20,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(indexes = @Index(name = "order_fragment_id_idx", columnList = "fragment_id"))
+@Table(name = "_order", indexes = @Index(name = "order_fragment_id_idx", columnList = "fragment_id"))
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING)
 public abstract class Order {
@@ -31,11 +31,11 @@ public abstract class Order {
 	@ManyToOne
 	@JoinColumn(name = "fragment_id", nullable = false)
 	private Fragment fragment;
-	@Column(nullable = false)
+	@Column(name = "_order", nullable = false)
 	private Integer order;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public Order() {
 		super();

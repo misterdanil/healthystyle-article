@@ -23,7 +23,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(indexes = @Index(name = "fragment_article_id_order_idx", columnList = "article_id,order"))
+@Table(indexes = @Index(name = "fragment_article_id_order_idx", columnList = "article_id, _order"))
 public class Fragment {
 	@Id
 	@SequenceGenerator(name = "fragment_generator", sequenceName = "fragment_seq", initialValue = 1, allocationSize = 20)
@@ -31,7 +31,7 @@ public class Fragment {
 	private Long id;
 	@Column(length = 300)
 	private String title;
-	@Column(nullable = false)
+	@Column(name = "_order", nullable = false)
 	private Integer order;
 	@ManyToOne
 	@JoinColumn(name = "article_id", nullable = false)

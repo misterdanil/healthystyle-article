@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ViewRepository extends JpaRepository<View, Long> {
-	@Query("SELECT COUNT(v) FROM View v INNER JOIN v.article a GROUP BY a.id WHERE a.id = :articleId")
+	@Query("SELECT COUNT(v) FROM View v WHERE v.article.id = :articleId GROUP BY v.article.id")
 	Integer countByArticle(Long articleId);
 
 	@Query("SELECT v FROM View v WHERE v.userId = :userId ORDER BY v.createdOn DESC")

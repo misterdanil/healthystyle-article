@@ -38,7 +38,7 @@ public class Comment {
 	@OneToMany(mappedBy = "replyTo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Comment> replies;
 	@Column(name = "created_on", nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public Comment() {
 		super();

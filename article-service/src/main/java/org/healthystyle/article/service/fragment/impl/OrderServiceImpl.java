@@ -15,6 +15,7 @@ import org.healthystyle.article.service.dto.fragment.OrderUpdateRequest;
 import org.healthystyle.article.service.dto.fragment.QuoteSaveRequest;
 import org.healthystyle.article.service.dto.fragment.QuoteUpdateRequest;
 import org.healthystyle.article.service.dto.fragment.RollSaveRequest;
+import org.healthystyle.article.service.dto.fragment.TextSaveRequest;
 import org.healthystyle.article.service.error.ArticleNotFoundException;
 import org.healthystyle.article.service.error.ImageNotFoundException;
 import org.healthystyle.article.service.error.OrderExistException;
@@ -28,14 +29,17 @@ import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistExce
 import org.healthystyle.article.service.error.fragment.link.ArticleLinkNotFoundException;
 import org.healthystyle.article.service.error.fragment.quote.QuoteNotFoundException;
 import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
+import org.healthystyle.article.service.error.fragment.text.TextNotFoundException;
 import org.healthystyle.article.service.fragment.ArticleLinkService;
 import org.healthystyle.article.service.fragment.FragmentImageService;
 import org.healthystyle.article.service.fragment.FragmentService;
 import org.healthystyle.article.service.fragment.OrderService;
 import org.healthystyle.article.service.fragment.QuoteService;
 import org.healthystyle.article.service.fragment.RollService;
+import org.healthystyle.article.service.fragment.TextService;
 import org.healthystyle.article.service.util.LogTemplate;
 import org.healthystyle.article.service.util.ParamsChecker;
+import org.healthystyle.util.error.AbstractException;
 import org.healthystyle.util.error.IdField;
 import org.healthystyle.util.error.ValidationException;
 import org.slf4j.Logger;
@@ -44,6 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -65,6 +70,8 @@ public class OrderServiceImpl implements OrderService {
 	private QuoteService quoteService;
 	@Autowired
 	private RollService rollService;
+	@Autowired
+	private TextService textService;
 
 	private static final Integer MAX_SIZE = 25;
 
@@ -150,9 +157,10 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Order save(OrderSaveRequest saveRequest, Long fragmentId)
-			throws ValidationException, OrderExistException, PreviousOrderNotFoundException, ArticleNotFoundException,
-			ArticleLinkExistException, ImageNotFoundException, RollNotFoundException, FragmentNotFoundException {
+	@Transactional(rollbackFor = { AbstractException.class, RuntimeException.class })
+	public Order save(OrderSaveRequest saveRequest, Long fragmentId) throws ValidationException, OrderExistException,
+			PreviousOrderNotFoundException, ArticleNotFoundException, ArticleLinkExistException, ImageNotFoundException,
+			RollNotFoundException, FragmentNotFoundException, TextNotFoundException {
 		LOG.debug("Validating order: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "order");
 		validator.validate(saveRequest, result);
@@ -170,12 +178,13 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderExistException(order, result);
 		}
 		if (order > 1 && !repository.existsByFragmentAndOrder(fragmentId, order - 1)) {
-			result.rejectValue("order", "order.save.order.previous_not_found", "Прошлый порядок не был найден");
+			result.rejectValue("order", "order.save.order.previous_not_found",
+					"Прошлый порядок " + order + "не был найден");
 			throw new PreviousOrderNotFoundException(order, result);
 		}
 
 		LOG.debug("The order is OK: {}", saveRequest);
-		
+
 		Order savedOrder;
 		if (saveRequest instanceof ArticleLinkSaveRequest) {
 			savedOrder = articleLinkService.save((ArticleLinkSaveRequest) saveRequest, fragment);
@@ -185,11 +194,12 @@ public class OrderServiceImpl implements OrderService {
 			savedOrder = quoteService.save((QuoteSaveRequest) saveRequest, fragment);
 		} else if (saveRequest instanceof RollSaveRequest) {
 			savedOrder = rollService.save((RollSaveRequest) saveRequest, fragment);
-		}
-		else {
+		} else if (saveRequest instanceof TextSaveRequest) {
+			savedOrder = textService.save((TextSaveRequest) saveRequest, fragment);
+		} else {
 			throw new RuntimeException("Unknown type: " + saveRequest.getClass().getName());
 		}
-		
+
 		return savedOrder;
 
 	}
@@ -197,7 +207,8 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void update(OrderUpdateRequest updateRequest, Long orderId)
 			throws ValidationException, OrderNotFoundException, ArticleLinkNotFoundException, ArticleLinkExistException,
-			ArticleNotFoundException, FragmentImageNotFoundException, ImageNotFoundException, QuoteNotFoundException, PreviousOrderNotFoundException {
+			ArticleNotFoundException, FragmentImageNotFoundException, ImageNotFoundException, QuoteNotFoundException,
+			PreviousOrderNotFoundException {
 		LOG.debug("Validating order: {}", updateRequest);
 		BindingResult result = new BeanPropertyBindingResult(updateRequest, "order");
 		validator.validate(updateRequest, result);

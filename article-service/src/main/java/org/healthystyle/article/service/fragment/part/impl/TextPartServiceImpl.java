@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.healthystyle.article.model.fragment.text.Text;
 import org.healthystyle.article.model.fragment.text.part.BoldPart;
 import org.healthystyle.article.model.fragment.text.part.CursivePart;
-import org.healthystyle.article.model.fragment.text.part.LinkPart;
 import org.healthystyle.article.model.fragment.text.part.TextPart;
 import org.healthystyle.article.repository.fragment.text.TextPartRepository;
 import org.healthystyle.article.service.dto.fragment.text.BoldPartSaveRequest;
@@ -37,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -130,6 +130,7 @@ public class TextPartServiceImpl implements TextPartService {
 	}
 
 	@Override
+	@Transactional
 	public TextPart save(TextPartSaveRequest saveRequest, Long textId)
 			throws ValidationException, OrderExistException, PreviousOrderNotFoundException, TextNotFoundException {
 		LOG.debug("Validating text part: {}", saveRequest);
@@ -149,7 +150,8 @@ public class TextPartServiceImpl implements TextPartService {
 			throw new OrderExistException(order, result);
 		}
 		if (order > 1 && !repository.existsByTextAndOrder(textId, order - 1)) {
-			result.rejectValue("order", "text.save.order.previous_not_found", "Прошлый порядок не был найден");
+			result.rejectValue("order", "text.save.order.previous_not_found",
+					"Прошлый порядок части текста " + order + " не был найден");
 			throw new PreviousOrderNotFoundException(order, result);
 		}
 
@@ -165,7 +167,8 @@ public class TextPartServiceImpl implements TextPartService {
 			textPart = new BoldPart(order, text, saveRequest.getText());
 			textPart = repository.save(textPart);
 		} else {
-			throw new RuntimeException("Unknown type: " + saveRequest.getClass().getName());
+			textPart = new TextPart(order, text, saveRequest.getText());
+			repository.save(textPart);
 		}
 
 		LOG.info("The text part was saved successfully: {}", textPart);

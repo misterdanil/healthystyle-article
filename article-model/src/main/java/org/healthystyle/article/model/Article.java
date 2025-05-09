@@ -23,6 +23,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "article_title_idx", columnList = "title"),
@@ -54,7 +55,11 @@ public class Article {
 	private List<View> views;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
+	@Transient
+	private Float averageMark;
+	@Transient
+	private Integer countView;
 
 	public Article() {
 		super();
@@ -169,4 +174,5 @@ public class Article {
 	public Instant getCreatedOn() {
 		return createdOn;
 	}
+	
 }

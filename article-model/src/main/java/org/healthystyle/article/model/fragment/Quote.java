@@ -19,13 +19,13 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(indexes = @Index(name = "quote_order_id_idx", columnList = "order_id"))
+//@Table(indexes = @Index(name = "quote_order_id_idx", columnList = "order_id"))
 @DiscriminatorValue("quote")
 public class Quote extends Order {
-	@Id
-	@SequenceGenerator(name = "quote_generator", sequenceName = "quote_seq", initialValue = 1, allocationSize = 20)
-	@GeneratedValue(generator = "quote_generator", strategy = GenerationType.SEQUENCE)
-	private Long id;
+//	@Id
+//	@SequenceGenerator(name = "quote_generator", sequenceName = "quote_seq", initialValue = 1, allocationSize = 20)
+//	@GeneratedValue(generator = "quote_generator", strategy = GenerationType.SEQUENCE)
+//	private Long id;
 	@Column(nullable = false)
 	private String name;
 	@Column(nullable = false)
@@ -44,9 +44,9 @@ public class Quote extends Order {
 		this.text = text;
 	}
 
-	public Long getId() {
-		return id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
 
 	public String getName() {
 		return name;

@@ -7,6 +7,7 @@ import org.healthystyle.article.service.ArticleService;
 import org.healthystyle.article.service.UserAccessor;
 import org.healthystyle.article.service.ViewService;
 import org.healthystyle.article.service.error.ArticleNotFoundException;
+import org.healthystyle.article.service.helper.IPHelper;
 import org.healthystyle.util.error.ValidationException;
 import org.healthystyle.util.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,17 @@ public class ViewServiceImpl implements ViewService {
 	private ArticleService articleService;
 	@Autowired
 	private UserAccessor userAccessor;
+	@Autowired
+	private IPHelper ipHelper;
 
 	@Override
 	public Integer countByArticle(Long articleId) {
-		return repository.countByArticle(articleId);
+		Integer count = repository.countByArticle(articleId);
+		if (count == null) {
+			return 0;
+		}
+
+		return count;
 	}
 
 	@Override
@@ -39,15 +47,23 @@ public class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	public View save(Long articleId) throws ValidationException, ArticleNotFoundException {
+	public View checkAndSave(Long articleId) throws ValidationException, ArticleNotFoundException {
 		User user = userAccessor.getUser();
 		Article article = articleService.findById(articleId);
-		if (user != null && !repository.existsByUserIdAndArticle(user.getId(), articleId)) {
-			View view = new View(user.getId(), article);
-			return repository.save(view);
-		} else {
+		if (user != null) {
+			if (!repository.existsByUserIdAndArticle(user.getId(), articleId)) {
+				View view = new View(user.getId(), article);
+				return repository.save(view);
+			}
 			return null;
 		}
+		String ip = ipHelper.getIP();
+		if (ip != null && !repository.existsByIpAndArticle(ip, articleId)) {
+			View view = new View(ip, article);
+			return repository.save(view);
+		}
+
+		return null;
 	}
 
 }

@@ -30,8 +30,7 @@ public class MarkServiceImpl implements MarkService {
 	}
 
 	@Override
-	public Mark save(MarkSaveRequest mark) {
-		Integer value = mark.getValue();
+	public Mark save(Integer value) {
 		return markRepository.save(new Mark(value));
 	}
 

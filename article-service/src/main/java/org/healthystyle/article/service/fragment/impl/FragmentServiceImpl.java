@@ -24,10 +24,12 @@ import org.healthystyle.article.service.error.fragment.FragmentNotFoundException
 import org.healthystyle.article.service.error.fragment.OrderNotFoundException;
 import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistException;
 import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
+import org.healthystyle.article.service.error.fragment.text.TextNotFoundException;
 import org.healthystyle.article.service.fragment.FragmentService;
 import org.healthystyle.article.service.fragment.OrderService;
 import org.healthystyle.article.service.util.LogTemplate;
 import org.healthystyle.article.service.util.ParamsChecker;
+import org.healthystyle.util.error.AbstractException;
 import org.healthystyle.util.error.IdField;
 import org.healthystyle.util.error.ValidationException;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -130,9 +133,11 @@ public class FragmentServiceImpl implements FragmentService {
 	}
 
 	@Override
-	public Fragment save(FragmentSaveRequest saveRequest, Long articleId) throws ValidationException,
-			FragmentExistException, OrderExistException, PreviousOrderNotFoundException, ArticleNotFoundException,
-			ArticleLinkExistException, ImageNotFoundException, RollNotFoundException, FragmentNotFoundException {
+	@Transactional(rollbackFor = { AbstractException.class, RuntimeException.class })
+	public Fragment save(FragmentSaveRequest saveRequest, Long articleId)
+			throws ValidationException, FragmentExistException, OrderExistException, PreviousOrderNotFoundException,
+			ArticleNotFoundException, ArticleLinkExistException, ImageNotFoundException, RollNotFoundException,
+			FragmentNotFoundException, TextNotFoundException {
 		LOG.debug("Validating fragment: {}", saveRequest);
 		BindingResult result = new BeanPropertyBindingResult(saveRequest, "fragment");
 		validator.validate(saveRequest, result);
@@ -162,7 +167,7 @@ public class FragmentServiceImpl implements FragmentService {
 		}
 
 		LOG.debug("Checking previous order for existence '{}'", order);
-		if (order > 1 && repository.existsByArticleAndOrder(articleId, order - 1)) {
+		if (order > 1 && !repository.existsByArticleAndOrder(articleId, order - 1)) {
 			result.rejectValue("order", "fragment.save.order.previous_not_found",
 					"Не найден прошлый фрагмент по порядку");
 			throw new PreviousOrderNotFoundException(order, result);

@@ -14,6 +14,7 @@ import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistExce
 import org.healthystyle.article.service.error.fragment.link.ArticleLinkNotFoundException;
 import org.healthystyle.article.service.error.fragment.quote.QuoteNotFoundException;
 import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
+import org.healthystyle.article.service.error.fragment.text.TextNotFoundException;
 import org.healthystyle.article.service.util.MethodNameHelper;
 import org.healthystyle.util.error.ValidationException;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ public interface OrderService {
 			.getMethodParamNames(OrderService.class, "findByFragmentAndOrder", Long.class, Integer.class);
 
 	static final String[] FIND_BY_FRAGMENT_PARAM_NAMES = MethodNameHelper.getMethodParamNames(OrderService.class,
-			"findByFragmentAndOrder", Long.class, int.class, int.class);
+			"findByFragment", Long.class, int.class, int.class);
 
 	Order findById(Long id) throws ValidationException, OrderNotFoundException;
 
@@ -31,9 +32,9 @@ public interface OrderService {
 
 	Page<Order> findByFragment(Long fragmentId, int page, int limit) throws ValidationException;
 
-	Order save(OrderSaveRequest saveRequest, Long fragmentId)
-			throws ValidationException, OrderExistException, PreviousOrderNotFoundException, ArticleNotFoundException,
-			ArticleLinkExistException, ImageNotFoundException, RollNotFoundException, FragmentNotFoundException;
+	Order save(OrderSaveRequest saveRequest, Long fragmentId) throws ValidationException, OrderExistException,
+			PreviousOrderNotFoundException, ArticleNotFoundException, ArticleLinkExistException, ImageNotFoundException,
+			RollNotFoundException, FragmentNotFoundException, TextNotFoundException;
 
 	void update(OrderUpdateRequest updateRequest, Long orderId)
 			throws ValidationException, OrderNotFoundException, ArticleLinkNotFoundException, ArticleLinkExistException,

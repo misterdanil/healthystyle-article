@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MarkArticleRepository extends JpaRepository<MarkArticle, Long> {
-	@Query("SELECT AVG(m.value) FROM MarkArticle ma INNER JOIN ma.mark m GROUP BY ma.article.id WHERE ma.article.id = :articleId")
+	@Query("SELECT AVG(m.value) FROM MarkArticle ma INNER JOIN ma.mark m WHERE ma.article.id = :articleId GROUP BY ma.article.id")
 	Float getAvgByArticle(Long articleId);
 
 	@Query("SELECT ma FROM MarkArticle ma  WHERE ma.article.id = :articleId ORDER BY ma.createdOn DESC")

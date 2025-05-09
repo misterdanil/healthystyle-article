@@ -2,6 +2,7 @@ package org.healthystyle.article.service.fragment.impl;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.healthystyle.article.model.Image;
 import org.healthystyle.article.model.fragment.Fragment;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 class FragmentImageServiceImpl implements FragmentImageService {
@@ -63,6 +65,17 @@ class FragmentImageServiceImpl implements FragmentImageService {
 		LOG.debug("Saving fragment image: {}", saveRequest);
 
 		ImageSaveRequest imageSaveRequest = saveRequest.getImage();
+		String fileName = imageSaveRequest.getFile().getOriginalFilename();
+
+		imageSaveRequest.setRoot("article");
+		String extension = null;
+		int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+			extension = "." + fileName.substring(i + 1);
+		}
+		imageSaveRequest.setRelativePath("/articles/" + fragment.getArticle().getId() + "/fragments/" + fragment.getId()
+				+ "/orders/" + UUID.randomUUID().toString() + "/" + UUID.randomUUID().toString() + extension);
+
 		LOG.debug("Saving image to save fragment image: {}", imageSaveRequest);
 		Image image = imageService.save(imageSaveRequest);
 
@@ -83,6 +96,16 @@ class FragmentImageServiceImpl implements FragmentImageService {
 		Long imageId = fragmentImage.getImage().getId();
 		LOG.debug("Updating image '{}' for fragment image '{}'", imageId, fragmentImageId);
 		imageService.update(imageUpdateRequest, imageId);
+	}
+
+	public static void main(String[] args) {
+		String fileName = "dwadawd.jpg";
+		String extension = null;
+		int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+			extension = fileName.substring(i + 1);
+			System.out.println(extension);
+		}
 	}
 
 }

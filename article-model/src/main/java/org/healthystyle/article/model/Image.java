@@ -23,20 +23,9 @@ public class Image {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "source_id")
 	private Source source;
-	@Column(nullable = false)
 	private Long imageId;
 	@Column(nullable = false)
-	private Instant createdOn;
-
-	public Image() {
-		super();
-	}
-
-	public Image(Long imageId) {
-		super();
-		this.imageId = imageId;
-		createdOn = Instant.now();
-	}
+	private Instant createdOn = Instant.now();
 
 	public Long getId() {
 		return id;

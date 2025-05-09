@@ -12,11 +12,21 @@ import jakarta.validation.constraints.Positive;
 @JsonSubTypes({ @JsonSubTypes.Type(value = ArticleLinkSaveRequest.class, name = "link"),
 		@JsonSubTypes.Type(value = FragmentImageSaveRequest.class, name = "image"),
 		@JsonSubTypes.Type(value = QuoteSaveRequest.class, name = "quote"),
-		@JsonSubTypes.Type(value = RollSaveRequest.class, name = "roll") })
+		@JsonSubTypes.Type(value = RollSaveRequest.class, name = "roll"),
+		@JsonSubTypes.Type(value = TextSaveRequest.class, name = "text") })
 public abstract class OrderSaveRequest {
+	private String id;
 	@NotNull(message = "Укажите порядок части фрагмента")
 	@Positive(message = "Порядок должен быть положительным и больше нуля")
 	private Integer order;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public Integer getOrder() {
 		return order;

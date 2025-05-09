@@ -21,13 +21,13 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(name = "fragment_image", indexes = @Index(name = "fragment_image_order_id_idx", columnList = "order_id"))
+//@Table(name = "fragment_image", indexes = @Index(name = "fragment_image_order_id_idx", columnList = "order_id"))
 @DiscriminatorValue("image")
 public class FragmentImage extends Order {
-	@Id
-	@SequenceGenerator(name = "fragment_image_generator", sequenceName = "fragment_image_seq", initialValue = 1, allocationSize = 20)
-	@GeneratedValue(generator = "fragment_image_generator", strategy = GenerationType.SEQUENCE)
-	private Long id;
+//	@Id
+//	@SequenceGenerator(name = "fragment_image_generator", sequenceName = "fragment_image_seq", initialValue = 1, allocationSize = 20)
+//	@GeneratedValue(generator = "fragment_image_generator", strategy = GenerationType.SEQUENCE)
+//	private Long id;
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "image_id", nullable = false)
 	private Image image;
@@ -45,9 +45,9 @@ public class FragmentImage extends Order {
 		createdOn = Instant.now();
 	}
 
-	public Long getId() {
-		return id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
 
 	public Image getImage() {
 		return image;

@@ -21,13 +21,13 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = @Index(name = "roll_order_id_idx", columnList = "order_id"))
+//@Table(indexes = @Index(name = "roll_order_id_idx", columnList = "order_id"))
 @DiscriminatorValue("roll")
 public class Roll extends Order {
-	@Id
-	@SequenceGenerator(name = "roll_generator", sequenceName = "roll_seq", initialValue = 1, allocationSize = 20)
-	@GeneratedValue(generator = "roll_generator", strategy = GenerationType.SEQUENCE)
-	private Long id;
+//	@Id
+//	@SequenceGenerator(name = "roll_generator", sequenceName = "roll_seq", initialValue = 1, allocationSize = 20)
+//	@GeneratedValue(generator = "roll_generator", strategy = GenerationType.SEQUENCE)
+//	private Long id;
 	@OneToMany(mappedBy = "roll", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<RollElement> rollElements;
 	@Column(nullable = false)
@@ -41,9 +41,9 @@ public class Roll extends Order {
 		super(fragment, order);
 	}
 
-	public Long getId() {
-		return id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
 
 	public List<RollElement> getRollElements() {
 		if (rollElements == null) {

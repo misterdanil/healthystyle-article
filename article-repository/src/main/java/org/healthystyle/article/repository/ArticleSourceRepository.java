@@ -12,9 +12,9 @@ public interface ArticleSourceRepository extends JpaRepository<ArticleSource, Lo
 	@Query("SELECT a FROM ArticleSource a WHERE a.article.id = :articleId AND a.order = :order")
 	ArticleSource findByArticleAndOrder(Long articleId, Integer order);
 
-	@Query("SELECT s FROM ArticleSource s INNER JOIN s.article a WHERE a.id = :articleId ORDER BY s.order")
+	@Query("SELECT a FROM ArticleSource a WHERE a.article.id = :articleId ORDER BY a.order")
 	Page<ArticleSource> findByArticle(Long articleId, Pageable pageable);
 
-	@Query("SELECT EXISTS (SELECT ArticleSource a WHERE a.article.id = :articleId AND a.order = :order)")
+	@Query("SELECT EXISTS (SELECT ars FROM ArticleSource ars WHERE ars.article.id = :articleId AND ars.order = :order)")
 	boolean existsByArticleAndOrder(Long articleId, Integer order);
 }

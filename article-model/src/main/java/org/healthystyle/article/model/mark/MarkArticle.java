@@ -36,7 +36,7 @@ public class MarkArticle {
 	private Long userId;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_on", nullable = false)
-	private Instant createdOn;
+	private Instant createdOn = Instant.now();
 
 	public MarkArticle() {
 		super();

@@ -11,6 +11,7 @@ import org.healthystyle.article.service.error.fragment.FragmentExistException;
 import org.healthystyle.article.service.error.fragment.FragmentNotFoundException;
 import org.healthystyle.article.service.error.fragment.link.ArticleLinkExistException;
 import org.healthystyle.article.service.error.fragment.roll.RollNotFoundException;
+import org.healthystyle.article.service.error.fragment.text.TextNotFoundException;
 import org.healthystyle.article.service.util.MethodNameHelper;
 import org.healthystyle.util.error.ValidationException;
 import org.springframework.data.domain.Page;
@@ -30,7 +31,7 @@ public interface FragmentService {
 
 	Fragment save(FragmentSaveRequest saveRequest, Long articleId) throws ValidationException, FragmentExistException,
 			OrderExistException, PreviousOrderNotFoundException, ArticleNotFoundException, ArticleLinkExistException,
-			ImageNotFoundException, RollNotFoundException, FragmentNotFoundException;
+			ImageNotFoundException, RollNotFoundException, FragmentNotFoundException, TextNotFoundException;
 
 	void update(FragmentUpdateRequest updateRequest, Long fragmentId) throws ValidationException,
 			FragmentNotFoundException, PreviousOrderNotFoundException, FragmentExistException;

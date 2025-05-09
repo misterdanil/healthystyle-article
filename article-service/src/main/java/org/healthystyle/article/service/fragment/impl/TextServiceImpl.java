@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -58,6 +59,28 @@ public class TextServiceImpl implements TextService {
 	}
 
 	@Override
+	public Text findFirstByArticle(Long articleId) throws ValidationException, TextNotFoundException {
+		BindingResult result = new MapBindingResult(new LinkedHashMap<>(), "text");
+		if (articleId == null) {
+			result.reject("text.find.article_id.not_null", "Укажите идентификатор статьи");
+		}
+		if (result.hasErrors()) {
+			throw new ValidationException("Article id is null", result);
+		}
+
+		Text text = repository.findFirstByArticle(articleId);
+		if (text == null) {
+			result.reject("text.find.article_id.not_found", "Не удалось найти текст");
+			throw new TextNotFoundException("Could not found text by article id: %s", result, articleId);
+		}
+
+		LOG.info("Got first text successfully by article id: {}", articleId);
+
+		return text;
+	}
+
+	@Override
+	@Transactional
 	public Text save(TextSaveRequest saveRequest, Fragment fragment)
 			throws ValidationException, OrderExistException, PreviousOrderNotFoundException, TextNotFoundException {
 		if (fragment == null) {
@@ -74,7 +97,7 @@ public class TextServiceImpl implements TextService {
 		Text text = new Text(fragment, saveRequest.getOrder());
 		text = repository.save(text);
 
-		List<TextPartSaveRequest> textPartSaveRequests = saveRequest.getTextParts();
+		List<TextPartSaveRequest> textPartSaveRequests = saveRequest.getParts();
 		LOG.debug("Saving text parts: {}", textPartSaveRequests);
 		for (TextPartSaveRequest textPartSaveRequest : textPartSaveRequests) {
 			LOG.debug("Saving text part: {}", textPartSaveRequest);

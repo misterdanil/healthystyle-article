@@ -7,6 +7,6 @@ import org.healthystyle.article.service.error.mark.MarkNotFoundException;
 public interface MarkService {
 	Mark findByValue(Integer value) throws MarkNotFoundException;
 	
-	Mark save(MarkSaveRequest mark);
+	Mark save(Integer value);
 
 }

@@ -22,13 +22,13 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = @Index(name = "text_order_id_idx", columnList = "order_id"))
+//@Table(indexes = @Index(name = "text_order_id_idx", columnList = "order_id"))
 @DiscriminatorValue("text")
 public class Text extends Order {
-	@Id
-	@SequenceGenerator(name = "text_generator", sequenceName = "text_seq", initialValue = 1, allocationSize = 5)
-	@GeneratedValue(generator = "text_generator", strategy = GenerationType.SEQUENCE)
-	private Long id;
+//	@Id
+//	@SequenceGenerator(name = "text_generator", sequenceName = "text_seq", initialValue = 1, allocationSize = 5)
+//	@GeneratedValue(generator = "text_generator", strategy = GenerationType.SEQUENCE)
+//	private Long id;
 	@OneToMany(mappedBy = "text", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<TextPart> textParts;
 	@Column(nullable = false)
@@ -42,9 +42,9 @@ public class Text extends Order {
 		super(fragment, order);
 	}
 
-	public Long getId() {
-		return id;
-	}
+//	public Long getId() {
+//		return id;
+//	}
 
 	public List<TextPart> getTextParts() {
 		if (textParts == null) {

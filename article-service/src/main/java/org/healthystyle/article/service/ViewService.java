@@ -12,5 +12,5 @@ public interface ViewService {
 
 	Page<View> findByArticle(Long articleId, int page, int limit);
 
-	View save(Long articleId) throws ValidationException, ArticleNotFoundException;
+	View checkAndSave(Long articleId) throws ValidationException, ArticleNotFoundException;
 }

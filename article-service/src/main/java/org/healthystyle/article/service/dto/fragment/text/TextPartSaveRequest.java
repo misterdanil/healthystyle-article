@@ -12,7 +12,8 @@ import jakarta.validation.constraints.Positive;
 @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
 @JsonSubTypes({ @JsonSubTypes.Type(value = CursivePartSaveRequest.class, name = "cursive"),
 		@JsonSubTypes.Type(value = BoldPartSaveRequest.class, name = "bold"),
-		@JsonSubTypes.Type(value = LinkPartSaveRequest.class, name = "link") })
+		@JsonSubTypes.Type(value = LinkPartSaveRequest.class, name = "link"),
+		@JsonSubTypes.Type(value = TextPartSaveRequest.class, name = "normal") })
 public class TextPartSaveRequest {
 	@NotBlank(message = "Укажите текст")
 	private String text;
