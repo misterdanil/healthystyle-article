@@ -23,11 +23,11 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 	@Query("SELECT a FROM Article a WHERE a.author = :author ORDER BY a.createdOn DESC")
 	Page<Article> findByAuthor(Long author, Pageable pageable);
 
-	@Query("SELECT a FROM Article a LEFT JOIN a.views v WHERE (CAST(:start AS TIMESTAMP) IS NULL OR a.createdOn >= :start) AND (CAST(:end AS TIMESTAMP) IS NULL OR a.createdOn <= :end) AND (:categoryId IS NULL OR a.category.id = :categoryId) AND (:authorId IS NULL OR a.author = :authorId) AND LOWER(a.title) LIKE CONCAT(LOWER(:title), '%') GROUP BY a.id ORDER BY COUNT(v.id)")
+	@Query("SELECT a FROM Article a LEFT JOIN a.views v WHERE (CAST(:start AS TIMESTAMP) IS NULL OR a.createdOn >= :start) AND (CAST(:end AS TIMESTAMP) IS NULL OR a.createdOn <= :end) AND (:categoryId IS NULL OR a.category.id = :categoryId) AND (:authorId IS NULL OR a.author = :authorId) AND LOWER(a.title) LIKE CONCAT(LOWER(:title), '%') GROUP BY a.id ORDER BY COUNT(v.id) DESC")
 	Page<Article> findMostWatched(String title, Long categoryId, Long authorId, Instant start, Instant end,
 			Pageable pageable);
 
-	@Query("SELECT a FROM Article a LEFT JOIN a.marks ma LEFT JOIN ma.mark m WHERE (CAST(:start AS TIMESTAMP) IS NULL OR a.createdOn >= :start) AND (CAST(:end AS TIMESTAMP) IS NULL OR a.createdOn <= :end) AND (:categoryId IS NULL OR a.category.id = :categoryId) AND (:authorId IS NULL OR a.author = :authorId) AND LOWER(a.title) LIKE CONCAT(LOWER(:title), '%') GROUP BY a.id ORDER BY AVG(m.value) NULLS LAST")
+	@Query("SELECT a FROM Article a LEFT JOIN a.marks ma LEFT JOIN ma.mark m WHERE (CAST(:start AS TIMESTAMP) IS NULL OR a.createdOn >= :start) AND (CAST(:end AS TIMESTAMP) IS NULL OR a.createdOn <= :end) AND (:categoryId IS NULL OR a.category.id = :categoryId) AND (:authorId IS NULL OR a.author = :authorId) AND LOWER(a.title) LIKE CONCAT(LOWER(:title), '%') GROUP BY a.id ORDER BY AVG(m.value) DESC NULLS LAST")
 	Page<Article> findMostMarked(String title, Long categoryId, Long authorId, Instant start, Instant end,
 			Pageable pageable);
 }

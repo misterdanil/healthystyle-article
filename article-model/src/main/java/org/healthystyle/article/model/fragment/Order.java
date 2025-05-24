@@ -51,6 +51,10 @@ public abstract class Order {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public Fragment getFragment() {
 		return fragment;
 	}
