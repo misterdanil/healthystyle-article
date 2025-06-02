@@ -148,7 +148,7 @@ public class ArticleSourceServiceImpl implements ArticleSourceService {
 			result.reject("article_source.save.order.exists", "Порядок уже существует");
 			throw new OrderExistException(order, result);
 		}
-		if (order > 1 && repository.existsByArticleAndOrder(articleId, order - 1)) {
+		if (order > 1 && !repository.existsByArticleAndOrder(articleId, order - 1)) {
 			LOG.debug("Checking existence for previous order: {}", order);
 			result.reject("article_source.save.order.not_found_previous", "Не удалось найти прошлый порядок");
 			throw new PreviousOrderNotFoundException(order, result);

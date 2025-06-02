@@ -19,8 +19,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
 	
 	@Query(value = "WITH RECURSIVE REPLIES AS ("
 			+ "SELECT c.* FROM comment c WHERE c.id = :commentId"
-			+ "UNION ALL"
-			+ "SELECT c.* FROM REPLIES r INNER JOIN comment c ON c.replyTo = r.id"
-			+ ")", nativeQuery = true)
+			+ " UNION ALL "
+			+ "SELECT c.* FROM REPLIES r INNER JOIN comment c ON c.comment_id = r.id"
+			+ ") SELECT * FROM REPLIES", nativeQuery = true)
 	List<Comment> findRepliesByComment(Long commentId, int page, int limit);
 }

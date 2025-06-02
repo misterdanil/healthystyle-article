@@ -73,6 +73,8 @@ public class TextServiceImpl implements TextService {
 			result.reject("text.find.article_id.not_found", "Не удалось найти текст");
 			throw new TextNotFoundException("Could not found text by article id: %s", result, articleId);
 		}
+		
+		text.getTextParts().sort((a, b) -> a.getOrder() - b.getOrder());
 
 		LOG.info("Got first text successfully by article id: {}", articleId);
 
